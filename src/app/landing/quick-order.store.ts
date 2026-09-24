@@ -6,28 +6,43 @@ import { ComboMeal } from './combo.model';
 })
 export class QuickOrderStore {
   readonly selectedCombo = signal<ComboMeal | null>(null);
-  readonly pickupTime = signal<string>('К 13:00');
 
-  // Юзернейм канала или аккаунта заведения в Telegram
-  readonly telegramChannelUrl = 'https://t.me/plov_center_73';
-  readonly telegramManagerUsername = 'plov_center_manager';
+  // Время по умолчанию — ближайшие 15-20 минут
+  readonly pickupTime = signal<string>('Как можно скорее (~15 мин)');
+
+  private readonly cafePhone = '79176091988';
 
   selectCombo(combo: ComboMeal): void {
     this.selectedCombo.set(combo);
   }
 
-  // Ссылка для отправки готового текста заказа в Telegram
-  readonly telegramOrderUrl = computed(() => {
+  // Метод переключения времени
+  setPickupTime(time: string): void {
+    this.pickupTime.set(time);
+  }
+
+  private readonly orderMessage = computed(() => {
     const combo = this.selectedCombo();
-    if (!combo) return null;
+    if (!combo) return '';
 
-    const text = encodeURIComponent(
-      `Ассаламу алейкум! Хочу заказать комбо на вынос:\n` +
-      `📦 Набор: ${combo.title} (${combo.price} ₽)\n` +
-      `⏰ Время готовности: ${this.pickupTime()}\n` +
-      `Подтвердите, пожалуйста!`
-    );
+    const lines = [
+      'Здравствуйте!',
+      'Хочу заказать комбо на вынос:',
+      `📦 Набор: ${combo.title} (${combo.price} ₽)`,
+      `⏰ Время готовности: ${this.pickupTime()}`,
+      'Подтвердите, пожалуйста!'
+    ];
 
-    return `https://t.me/${this.telegramManagerUsername}?text=${text}`;
+    return lines.map(line => encodeURIComponent(line)).join('%0A');
+  });
+
+  readonly whatsappOrderUrl = computed(() => {
+    const msg = this.orderMessage();
+    return msg ? `https://wa.me/${this.cafePhone}?text=${msg}` : null;
+  });
+
+  readonly telegramOrderUrl = computed(() => {
+    const msg = this.orderMessage();
+    return msg ? `https://t.me/+${this.cafePhone}?text=${msg}` : null;
   });
 }
