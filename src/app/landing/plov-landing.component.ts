@@ -7,141 +7,200 @@ import { QuickOrderStore } from './quick-order.store';
   standalone: true,
   template: `
     <main class="plov-app">
-      <section class="hero-section">
-        <!-- Только чистая печать без дублирующих текстовых строк снизу -->
-        <div class="halal-seal-wrapper">
-          <svg class="halal-seal-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="50" cy="50" r="47" stroke="#eab308" stroke-width="1.5" stroke-dasharray="2.5 2.5"/>
-            <rect x="22" y="22" width="56" height="56" rx="4" fill="#064e3b" stroke="#eab308" stroke-width="2" />
-            <rect x="22" y="22" width="56" height="56" rx="4" fill="#064e3b" stroke="#eab308" stroke-width="2" transform="rotate(45 50 50)" />
-            <circle cx="50" cy="50" r="28" fill="#042f2e" stroke="#ca8a04" stroke-width="1.2"/>
-            <text x="50" y="55" font-size="20" font-weight="bold" fill="#fef08a" text-anchor="middle" font-family="serif">حلال</text>
-            <text x="50" y="66" font-size="7" font-weight="bold" fill="#86efac" text-anchor="middle" letter-spacing="1">HALAL</text>
-          </svg>
-        </div>
+      <!-- 1. Чистые фоновые фото без плашек и надписей -->
+      <div class="culture-backdrop" aria-hidden="true">
+        <div class="side-photo left-photo"></div>
+        <div class="center-blackout"></div>
+        <div class="side-photo right-photo"></div>
+      </div>
 
-        <h1>Плов Центр</h1>
-        <p class="address">Ульяновск, ул. Рябикова, 89 (2 этаж)</p>
-        <p class="hero-desc">
-          Сытные восточные обеды. Выберите комбо и заберите горячим без очереди за 15 минут.
-        </p>
-      </section>
+      <!-- 2. Рабочий контент -->
+      <div class="page-content">
+        <header class="hero-section">
+          <!-- Печать Халяль -->
+          <div class="halal-seal-wrapper">
+            <svg class="halal-seal-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="50" cy="50" r="47" stroke="#ca8a04" stroke-width="1.5" stroke-dasharray="2.5 2.5"/>
+              <rect x="22" y="22" width="56" height="56" rx="4" fill="#064e3b" stroke="#eab308" stroke-width="2" />
+              <rect x="22" y="22" width="56" height="56" rx="4" fill="#064e3b" stroke="#eab308" stroke-width="2" transform="rotate(45 50 50)" />
+              <circle cx="50" cy="50" r="28" fill="#042f2e" stroke="#ca8a04" stroke-width="1.2"/>
+              <text x="50" y="55" font-size="20" font-weight="bold" fill="#fef08a" text-anchor="middle" font-family="serif">حلال</text>
+              <text x="50" y="66" font-size="7" font-weight="bold" fill="#86efac" text-anchor="middle" letter-spacing="1">HALAL</text>
+            </svg>
+          </div>
 
-      <section class="combos-section">
-        <header class="section-head">
-          <h2>Комбо-обеды на вынос</h2>
-          <p>Свежие порции прямо из казана и с мангала</p>
+          <h1>Плов Центр</h1>
+          <p class="address">Ульяновск, ул. Рябикова, 89 (2 этаж)</p>
+          <p class="tagline">Традиции Востока — на берегах Волги</p>
+          <p class="hero-desc">
+            Сытные восточные обеды. Выберите комбо и заберите горячим без очереди за 15 минут.
+          </p>
         </header>
 
-        <div class="combos-grid">
-          @for (combo of comboList(); track combo.id) {
-            <article
-              class="combo-card"
-              [class.is-selected]="orderStore.selectedCombo()?.id === combo.id">
+        <!-- Меню комбо-обедов -->
+        <section class="combos-section">
+          <header class="section-head">
+            <h2>Комбо-обеды на вынос</h2>
+            <p>Свежие порции прямо из казана и с мангала</p>
+          </header>
 
-              @if (combo.badge) {
-                <span class="badge">{{ combo.badge }}</span>
-              }
+          <div class="combos-grid">
+            @for (combo of comboList(); track combo.id) {
+              <article
+                class="combo-card"
+                [class.is-selected]="orderStore.selectedCombo()?.id === combo.id">
 
-              <div class="combo-info">
-                <h3>{{ combo.title }}</h3>
-                <span class="weight">{{ combo.weightGrams }} г</span>
-                <p class="desc">{{ combo.description }}</p>
+                @if (combo.badge) {
+                  <span class="badge">{{ combo.badge }}</span>
+                }
 
-                <ul class="combo-composition">
-                  @for (item of combo.items; track item) {
-                    <li>✔ {{ item }}</li>
-                  }
-                </ul>
-              </div>
+                <div class="combo-info">
+                  <h3>{{ combo.title }}</h3>
+                  <span class="weight">{{ combo.weightGrams }} г</span>
+                  <p class="desc">{{ combo.description }}</p>
 
-              <!-- Цены и кнопка выбора -->
-              <div class="card-footer">
-                <div class="price-box">
-                  <span class="current-price">{{ combo.price }} ₽</span>
-                  @if (combo.oldPrice) {
-                    <span class="old-price">{{ combo.oldPrice }} ₽</span>
-                  }
+                  <ul class="combo-composition">
+                    @for (item of combo.items; track item) {
+                      <li>✔ {{ item }}</li>
+                    }
+                  </ul>
                 </div>
 
-                <button
-                  type="button"
-                  class="btn-select"
-                  [class.active]="orderStore.selectedCombo()?.id === combo.id"
-                  (click)="orderStore.selectCombo(combo)">
-                  {{ orderStore.selectedCombo()?.id === combo.id ? 'Выбрано' : 'Выбрать' }}
-                </button>
-              </div>
-
-              <!-- Блок оформления внутри карточки -->
-              @if (orderStore.selectedCombo()?.id === combo.id) {
-                <div class="inline-order-block">
-                  <div class="time-picker-block">
-                    <span class="time-label">Время готовности:</span>
-                    <div class="time-options">
-                      @for (preset of timePresets; track preset) {
-                        <button
-                          type="button"
-                          class="time-chip"
-                          [class.active]="orderStore.pickupTime() === preset"
-                          (click)="orderStore.setPickupTime(preset)">
-                          {{ preset }}
-                        </button>
-                      }
-                    </div>
-
-                    <div class="custom-time-row">
-                      <span>Или ко времени:</span>
-                      <input
-                        type="time"
-                        class="time-input"
-                        (change)="onCustomTimeChange($event)" />
-                    </div>
+                <!-- Цены и кнопка выбора -->
+                <div class="card-footer">
+                  <div class="price-box">
+                    <span class="current-price">{{ combo.price }} ₽</span>
+                    @if (combo.oldPrice) {
+                      <span class="old-price">{{ combo.oldPrice }} ₽</span>
+                    }
                   </div>
 
-                  <div class="order-buttons">
-                    <a
-                      [href]="orderStore.whatsappOrderUrl()"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="btn-order btn-whatsapp">
-                      В WhatsApp
-                    </a>
-                    <a
-                      [href]="orderStore.telegramOrderUrl()"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="btn-order btn-telegram">
-                      В Telegram
-                    </a>
-                  </div>
+                  <button
+                    type="button"
+                    class="btn-select"
+                    [class.active]="orderStore.selectedCombo()?.id === combo.id"
+                    (click)="orderStore.selectCombo(combo)">
+                    {{ orderStore.selectedCombo()?.id === combo.id ? 'Выбрано' : 'Выбрать' }}
+                  </button>
                 </div>
-              }
-            </article>
-          }
-        </div>
-      </section>
+
+                <!-- Блок заказа внутри выбранной карточки -->
+                @if (orderStore.selectedCombo()?.id === combo.id) {
+                  <div class="inline-order-block">
+                    <div class="time-picker-block">
+                      <span class="time-label">Время готовности:</span>
+                      <div class="time-options">
+                        @for (preset of timePresets; track preset) {
+                          <button
+                            type="button"
+                            class="time-chip"
+                            [class.active]="orderStore.pickupTime() === preset"
+                            (click)="orderStore.setPickupTime(preset)">
+                            {{ preset }}
+                          </button>
+                        }
+                      </div>
+
+                      <div class="custom-time-row">
+                        <span>Или ко времени:</span>
+                        <input
+                          type="time"
+                          class="time-input"
+                          (change)="onCustomTimeChange($event)" />
+                      </div>
+                    </div>
+
+                    <div class="order-buttons">
+                      <a
+                        [href]="orderStore.whatsappOrderUrl()"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="btn-order btn-whatsapp">
+                        В WhatsApp
+                      </a>
+                      <a
+                        [href]="orderStore.telegramOrderUrl()"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="btn-order btn-telegram">
+                        В Telegram
+                      </a>
+                    </div>
+                  </div>
+                }
+              </article>
+            }
+          </div>
+        </section>
+      </div>
     </main>
   `,
   styles: [`
     :host {
-      --primary: #d97706;
-      --bg-dark: #1c1917;
-      --surface: #292524;
-      --text: #f5f5f4;
-      --text-muted: #a8a29e;
-      --gold: #eab308;
+      --pure-black: #0c0a09;
+      --card-bg: rgba(22, 19, 18, 0.95);
+      --card-border: #292524;
+      --red-accent: #dc2626;
+      --text-white: #fafaf9;
+      --text-gray: #a8a29e;
+      --gold: #f59e0b;
+
       display: block;
-      background-color: var(--bg-dark);
-      color: var(--text);
+      background-color: var(--pure-black);
+      color: var(--text-white);
       min-height: 100vh;
       font-family: system-ui, -apple-system, sans-serif;
+      position: relative;
+    }
+
+    /* Фоновый слой на всю высоту */
+    .culture-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .side-photo {
+      flex: 1;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: 0.45;
+    }
+
+    .left-photo {
+      background-image: url('/assets/pamir.jpg');
+    }
+
+    .right-photo {
+      background-image: url('/assets/volga.jpg');
+    }
+
+    /* Чёрный коридор по центру для идеального чтения меню */
+    .center-blackout {
+      width: 760px;
+      max-width: 58vw;
+      height: 100%;
+      background: var(--pure-black);
+      box-shadow: 0 0 90px 70px var(--pure-black);
+    }
+
+    /* Рабочий контент */
+    .page-content {
+      position: relative;
+      z-index: 1;
     }
 
     .hero-section {
-      padding: 2.2rem 1.25rem 1rem;
+      padding: 3rem 1.5rem 1.5rem;
       text-align: center;
-      max-width: 600px;
+      max-width: 650px;
       margin: 0 auto;
     }
 
@@ -152,96 +211,118 @@ import { QuickOrderStore } from './quick-order.store';
     }
 
     .halal-seal-svg {
-      width: 74px;
-      height: 74px;
-      filter: drop-shadow(0 4px 12px rgba(6, 78, 59, 0.45));
+      width: 72px;
+      height: 72px;
+      filter: drop-shadow(0 4px 12px rgba(6, 78, 59, 0.4));
     }
 
     h1 {
-      font-size: 2.2rem;
-      margin: 0.3rem 0 0.2rem;
+      font-size: 2.5rem;
+      margin: 0.3rem 0;
+      color: #ffffff;
+      font-weight: 800;
       letter-spacing: -0.02em;
     }
 
     .address {
-      color: var(--primary);
-      font-size: 0.9rem;
-      font-weight: 500;
+      color: var(--red-accent);
+      font-size: 1rem;
+      font-weight: 700;
+      margin: 0 0 0.3rem;
+    }
+
+    .tagline {
+      color: var(--gold);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
       margin-bottom: 0.6rem;
     }
 
     .hero-desc {
-      color: var(--text-muted);
+      color: var(--text-gray);
       font-size: 0.95rem;
       line-height: 1.5;
     }
 
+    /* Меню комбо */
     .combos-section {
-      padding: 1.5rem 1.25rem 4rem;
-      max-width: 1000px;
+      padding: 1.5rem 1.5rem 5rem;
+      max-width: 1060px;
       margin: 0 auto;
     }
 
     .section-head {
-      margin-bottom: 1.5rem;
+      margin-bottom: 2rem;
       text-align: center;
     }
 
     .section-head h2 {
-      font-size: 1.4rem;
-      margin-bottom: 0.3rem;
+      font-size: 1.55rem;
+      margin-bottom: 0.4rem;
+      color: #ffffff;
     }
 
     .section-head p {
-      color: var(--text-muted);
-      font-size: 0.85rem;
+      color: var(--text-gray);
+      font-size: 0.9rem;
     }
 
     .combos-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.25rem;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 1.5rem;
       align-items: start;
     }
 
     .combo-card {
-      background: var(--surface);
-      border: 2px solid #44403c;
-      border-radius: 12px;
-      padding: 1.25rem;
+      background: var(--card-bg);
+      backdrop-filter: blur(8px);
+      border: 1.5px solid var(--card-border);
+      border-radius: 14px;
+      padding: 1.4rem;
       position: relative;
       display: flex;
       flex-direction: column;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
       transition: border-color 0.2s ease;
     }
 
     .combo-card.is-selected {
-      border-color: var(--primary);
-      box-shadow: 0 4px 20px rgba(217, 119, 6, 0.15);
+      border-color: var(--red-accent);
+      box-shadow: 0 0 20px rgba(220, 38, 38, 0.25);
     }
 
     .badge {
       position: absolute;
-      top: -10px;
-      right: 12px;
-      background: var(--primary);
-      color: #fff;
+      top: -11px;
+      right: 14px;
+      background: var(--red-accent);
+      color: #ffffff;
       font-size: 0.75rem;
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      font-weight: bold;
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+      font-weight: 700;
+    }
+
+    .combo-info h3 {
+      font-size: 1.25rem;
+      color: #ffffff;
+      margin-top: 0.2rem;
     }
 
     .weight {
       display: inline-block;
       font-size: 0.8rem;
-      color: var(--primary);
+      color: var(--gold);
+      font-weight: 600;
       margin-bottom: 0.5rem;
     }
 
     .desc {
       font-size: 0.85rem;
-      color: var(--text-muted);
+      color: var(--text-gray);
       line-height: 1.4;
     }
 
@@ -250,51 +331,54 @@ import { QuickOrderStore } from './quick-order.store';
       padding: 0;
       margin: 1rem 0;
       font-size: 0.85rem;
-      color: var(--text-muted);
+      color: #e5e5e5;
     }
 
     .combo-composition li {
-      margin-bottom: 0.35rem;
+      margin-bottom: 0.4rem;
     }
 
     .card-footer {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-top: 1px solid #44403c;
-      padding-top: 0.8rem;
+      border-top: 1px solid var(--card-border);
+      padding-top: 1rem;
     }
 
     .current-price {
-      font-size: 1.3rem;
-      font-weight: 700;
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: #ffffff;
     }
 
     .old-price {
       text-decoration: line-through;
-      color: var(--text-muted);
+      color: #737373;
       font-size: 0.85rem;
       margin-left: 0.4rem;
     }
 
     .btn-select {
-      background: #44403c;
-      color: #fff;
-      border: none;
-      padding: 0.45rem 1rem;
-      border-radius: 6px;
+      background: #262626;
+      color: #ffffff;
+      border: 1px solid #404040;
+      padding: 0.5rem 1.15rem;
+      border-radius: 8px;
       cursor: pointer;
-      font-weight: 500;
+      font-weight: 600;
     }
 
     .btn-select.active {
-      background: var(--primary);
+      background: var(--red-accent);
+      border-color: var(--red-accent);
+      color: #ffffff;
     }
 
     .inline-order-block {
       margin-top: 1rem;
       padding-top: 1rem;
-      border-top: 1px dashed #57534e;
+      border-top: 1px dashed #404040;
       display: flex;
       flex-direction: column;
       gap: 0.75rem;
@@ -314,7 +398,7 @@ import { QuickOrderStore } from './quick-order.store';
 
     .time-label {
       font-size: 0.8rem;
-      color: var(--text-muted);
+      color: var(--text-gray);
     }
 
     .time-options {
@@ -324,20 +408,20 @@ import { QuickOrderStore } from './quick-order.store';
     }
 
     .time-chip {
-      background: #1c1917;
-      color: var(--text);
-      border: 1px solid #44403c;
-      padding: 0.3rem 0.55rem;
+      background: #1a1a1a;
+      color: #e5e5e5;
+      border: 1px solid #333333;
+      padding: 0.35rem 0.6rem;
       border-radius: 6px;
       font-size: 0.75rem;
       cursor: pointer;
     }
 
     .time-chip.active {
-      border-color: var(--primary);
-      background: #451a03;
-      color: #fbbf24;
-      font-weight: 600;
+      border-color: var(--red-accent);
+      background: #450a0a;
+      color: #fca5a5;
+      font-weight: 700;
     }
 
     .custom-time-row {
@@ -345,14 +429,14 @@ import { QuickOrderStore } from './quick-order.store';
       align-items: center;
       justify-content: space-between;
       font-size: 0.8rem;
-      color: var(--text-muted);
+      color: var(--text-gray);
       margin-top: 0.2rem;
     }
 
     .time-input {
-      background: #1c1917;
-      border: 1px solid #44403c;
-      color: #fff;
+      background: #1a1a1a;
+      border: 1px solid #333333;
+      color: #ffffff;
       padding: 0.25rem 0.4rem;
       border-radius: 6px;
       font-size: 0.8rem;
@@ -361,21 +445,26 @@ import { QuickOrderStore } from './quick-order.store';
     .order-buttons {
       display: flex;
       gap: 0.5rem;
+      margin-top: 0.2rem;
     }
 
     .btn-order {
       flex: 1;
       text-align: center;
       text-decoration: none;
-      padding: 0.6rem;
-      border-radius: 6px;
+      padding: 0.65rem;
+      border-radius: 8px;
       font-weight: 600;
       font-size: 0.85rem;
       color: #fff;
     }
 
-    .btn-whatsapp { background: #22c55e; }
+    .btn-whatsapp { background: #16a34a; }
     .btn-telegram { background: #0284c7; }
+
+    @media (max-width: 900px) {
+      .culture-backdrop { opacity: 0.2; }
+    }
   `]
 })
 export class PlovLandingComponent {
