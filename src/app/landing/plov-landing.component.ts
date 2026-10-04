@@ -7,7 +7,7 @@ import { QuickOrderStore } from './quick-order.store';
   standalone: true,
   template: `
     <main class="plov-app">
-      <!-- 1. Чистые фоновые фото без плашек и надписей -->
+      <!-- 1. Фоновые фото Душанбе и Ульяновска -->
       <div class="culture-backdrop" aria-hidden="true">
         <div class="side-photo left-photo"></div>
         <div class="center-blackout"></div>
@@ -30,7 +30,28 @@ import { QuickOrderStore } from './quick-order.store';
           </div>
 
           <h1>Плов Центр</h1>
-          <p class="address">Ульяновск, ул. Рябикова, 89 (2 этаж)</p>
+
+          <!-- Адрес и кнопка карты -->
+          <div class="meta-row">
+            <a
+              href="https://yandex.ru/maps/?text=Ульяновск+ул+Рябикова+89+Плов+Центр"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="address-link">
+              📍 Ульяновск, ул. Рябикова, 89 (2 этаж) ↗
+            </a>
+          </div>
+
+          <!-- Телефон и режим работы -->
+          <div class="contact-badges">
+            <a href="tel:+79176091988" class="contact-pill phone-pill">
+              📞 +7 (917) 609-19-88
+            </a>
+            <span class="contact-pill time-pill">
+              🕒 Ежедневно 10:00 — 22:00
+            </span>
+          </div>
+
           <p class="tagline">Традиции Востока — на берегах Волги</p>
           <p class="hero-desc">
             Сытные восточные обеды. Выберите комбо и заберите горячим без очереди за 15 минут.
@@ -182,7 +203,6 @@ import { QuickOrderStore } from './quick-order.store';
       background-image: url('/assets/volga.jpg');
     }
 
-    /* Чёрный коридор по центру для идеального чтения меню */
     .center-blackout {
       width: 760px;
       max-width: 58vw;
@@ -200,7 +220,7 @@ import { QuickOrderStore } from './quick-order.store';
     .hero-section {
       padding: 3rem 1.5rem 1.5rem;
       text-align: center;
-      max-width: 650px;
+      max-width: 680px;
       margin: 0 auto;
     }
 
@@ -224,11 +244,57 @@ import { QuickOrderStore } from './quick-order.store';
       letter-spacing: -0.02em;
     }
 
-    .address {
+    .meta-row {
+      margin-bottom: 0.5rem;
+    }
+
+    .address-link {
       color: var(--red-accent);
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 700;
-      margin: 0 0 0.3rem;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+
+    .address-link:hover {
+      text-decoration: underline;
+      opacity: 0.85;
+    }
+
+    .contact-badges {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.8rem;
+    }
+
+    .contact-pill {
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.35rem 0.75rem;
+      border-radius: 9999px;
+      background: #1c1917;
+      border: 1px solid #332f2c;
+      color: #d6d3d1;
+      text-decoration: none;
+    }
+
+    .phone-pill {
+      color: #ffffff;
+      border-color: #44403c;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .phone-pill:hover {
+      background: #292524;
+      border-color: var(--red-accent);
+      color: var(--red-accent);
+    }
+
+    .time-pill {
+      color: var(--gold);
     }
 
     .tagline {
@@ -237,7 +303,7 @@ import { QuickOrderStore } from './quick-order.store';
       font-weight: 600;
       letter-spacing: 0.06em;
       text-transform: uppercase;
-      margin-bottom: 0.6rem;
+      margin-bottom: 0.4rem;
     }
 
     .hero-desc {

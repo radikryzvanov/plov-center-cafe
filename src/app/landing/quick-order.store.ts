@@ -1,48 +1,49 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 import { ComboMeal } from './combo.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class QuickOrderStore {
-  readonly selectedCombo = signal<ComboMeal | null>(null);
+  // Реальный номер телефона кафе "Плов Центр" на Рябикова 89
+  readonly cafePhone = '79176091988';
+  // Имя менеджера/бота в Telegram (или контакт для связи)
+  readonly cafeTelegram = 'plovcenter73';
 
-  // Время по умолчанию — ближайшие 15-20 минут
+  readonly selectedCombo = signal<ComboMeal | null>(null);
   readonly pickupTime = signal<string>('Как можно скорее (~15 мин)');
 
-  private readonly cafePhone = '79176091988';
-
   selectCombo(combo: ComboMeal): void {
-    this.selectedCombo.set(combo);
+    if (this.selectedCombo()?.id === combo.id) {
+      this.selectedCombo.set(null);
+    } else {
+      this.selectedCombo.set(combo);
+    }
   }
 
-  // Метод переключения времени
   setPickupTime(time: string): void {
     this.pickupTime.set(time);
   }
 
-  private readonly orderMessage = computed(() => {
+  readonly orderText = computed(() => {
     const combo = this.selectedCombo();
     if (!combo) return '';
 
-    const lines = [
-      'Здравствуйте!',
-      'Хочу заказать комбо на вынос:',
-      `📦 Набор: ${combo.title} (${combo.price} ₽)`,
-      `⏰ Время готовности: ${this.pickupTime()}`,
-      'Подтвердите, пожалуйста!'
-    ];
-
-    return lines.map(line => encodeURIComponent(line)).join('%0A');
+    return (
+      `Здравствуйте! Хочу сделать предзаказ в «Плов Центр» (Рябикова, 89):\n\n` +
+      `🍲 ${combo.title} (${combo.price} ₽)\n` +
+      `⏱ Время готовности: ${this.pickupTime()}\n\n` +
+      `Подтвердите, пожалуйста, заказ!`
+    );
   });
 
   readonly whatsappOrderUrl = computed(() => {
-    const msg = this.orderMessage();
-    return msg ? `https://wa.me/${this.cafePhone}?text=${msg}` : null;
+    const text = encodeURIComponent(this.orderText());
+    return `https://wa.me/${this.cafePhone}?text=${text}`;
   });
 
   readonly telegramOrderUrl = computed(() => {
-    const msg = this.orderMessage();
-    return msg ? `https://t.me/+${this.cafePhone}?text=${msg}` : null;
+    const text = encodeURIComponent(this.orderText());
+    return `https://t.me/share/url?url=https://t.me/${this.cafeTelegram}&text=${text}`;
   });
 }
