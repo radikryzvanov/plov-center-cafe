@@ -1,4 +1,5 @@
 import { computed, Injectable, signal } from '@angular/core';
+import { SITE } from '../site.config';
 
 export type MenuTone = 'saffron' | 'emerald' | 'night' | 'ivory' | 'lime';
 
@@ -26,8 +27,7 @@ export interface OrderLine {
   providedIn: 'root'
 })
 export class QuickOrderStore {
-  // Телефон и WhatsApp кафе «Плов центр халяль» (Рябикова, 89) — из карточки на Яндекс Картах
-  readonly cafePhone = '79176091988';
+  readonly cafePhone = SITE.phone;
 
   // ВАЖНО: цены и описания взяты из карточки на Яндекс Картах (меню там давно не обновлялось).
   // Перед запуском сайта сверить с владельцем и при необходимости поправить здесь.
@@ -155,6 +155,7 @@ export class QuickOrderStore {
   });
 
   readonly whatsappOrderUrl = computed(() => {
+    if (SITE.demo) return '#';
     const text = encodeURIComponent(this.orderText());
     return `https://wa.me/${this.cafePhone}?text=${text}`;
   });

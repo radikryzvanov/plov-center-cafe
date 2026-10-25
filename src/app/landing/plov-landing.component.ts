@@ -1,4 +1,5 @@
 import { afterNextRender, ChangeDetectionStrategy, Component, ElementRef, inject, signal, viewChild } from '@angular/core';
+import { SITE } from '../site.config';
 import { QuickOrderStore } from './quick-order.store';
 
 interface MoreDish {
@@ -19,11 +20,12 @@ const repeat = (words: string[], times: number): string[] =>
 export class PlovLandingComponent {
   protected readonly store = inject(QuickOrderStore);
 
-  // Ссылки кафе. Max: ссылка-приглашение с карточки на Яндекс Картах — перед запуском проверить, что открывается.
-  protected readonly mapUrl = 'https://yandex.ru/maps/org/plov_tsentr_khalyal/205389507410/';
-  protected readonly whatsappUrl = 'https://wa.me/79176091988';
-  protected readonly maxUrl = 'https://max.ru/join/TuvIpjuyexcxEON9Uwz5BG3IOzQO3PGf3tpKLYM9JGE';
-  protected readonly vkUrl = 'https://vk.ru/id881658891';
+  // Контакты и режим демо лежат в site.config.ts
+  protected readonly site = SITE;
+  protected readonly mapUrl = SITE.mapUrl;
+  protected readonly whatsappUrl = SITE.whatsappUrl;
+  protected readonly maxUrl = SITE.maxUrl;
+  protected readonly vkUrl = SITE.vkUrl;
 
   protected readonly timePresets = ['Как можно скорее', 'Через 30 минут', 'Через 1 час'];
 
@@ -34,7 +36,7 @@ export class PlovLandingComponent {
     4
   );
 
-  // «Ещё готовим»: блюда с фото, цены уточняются по телефону
+  // «Ещё готовим»: блюда с фото, цены уточняются у кафе
   protected readonly moreDishes: MoreDish[] = [
     { title: 'Лагман', photo: '/assets/photos/lagman.jpg', alt: 'Лагман в белой пиале на синей тарелке с узором' },
     { title: 'Жареный лагман', photo: '/assets/photos/lagman_fried.jpg', alt: 'Жареный лагман с мясом и зеленью' },
@@ -46,6 +48,8 @@ export class PlovLandingComponent {
   // Лёгкий наклон видео за курсором (только на устройствах с мышью)
   protected readonly tilt = signal('');
   protected readonly copied = signal(false);
+  protected readonly toast = signal('');
+  private toastTimer?: ReturnType<typeof setTimeout>;
   protected readonly isCustomTime = signal(false);
 
   private readonly heroVideo = viewChild<ElementRef<HTMLVideoElement>>('heroVideo');
@@ -80,8 +84,21 @@ export class PlovLandingComponent {
     this.store.setPickupTime(`к ${value}`);
   }
 
+  // В демо-версии контакты не работают: вместо перехода показываем подсказку
+  protected onContact(event: Event): void {
+    if (!SITE.demo) return;
+    event.preventDefault();
+    this.toast.set('Демо-версия: заказ никуда не отправляется.');
+    clearTimeout(this.toastTimer);
+    this.toastTimer = setTimeout(() => this.toast.set(''), 4500);
+  }
+
   // Max и ВКонтакте не умеют подставлять текст в чат по ссылке — копируем заказ, гость вставляет его сам
-  protected copyOrder(): void {
+  protected copyOrder(event: Event): void {
+    if (SITE.demo) {
+      this.onContact(event);
+      return;
+    }
     const text = this.store.orderText();
     const done = () => this.copied.set(true);
     if (navigator.clipboard?.writeText) {

@@ -52,7 +52,7 @@ button { font: inherit; cursor: pointer; }
 @media (prefers-reduced-motion: reduce) { .aurora i { animation: none; } }
 
 /* ---------- верхняя панель ---------- */
-.topbar { position: fixed; z-index: 30; inset: 0 0 auto 0; background: rgba(6, 17, 28, .72); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
+.topbar { position: fixed; z-index: 30; inset: var(--demo-h) 0 auto 0; background: rgba(6, 17, 28, .72); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
 .topbar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 1rem; height: 84px; }
 .logo { display: inline-flex; align-items: center; gap: .8rem; text-decoration: none; line-height: 1; }
 .logo-text { display: inline-flex; flex-direction: column; }
@@ -70,7 +70,7 @@ button { font: inherit; cursor: pointer; }
 @media (min-width: 820px) { .topnav { display: flex; } }
 
 /* ---------- первый экран ---------- */
-.hero { position: relative; overflow: hidden; padding: 130px 0 80px; }
+.hero { position: relative; overflow: hidden; padding: calc(130px + var(--demo-h)) 0 80px; }
 .hero .wrap { z-index: 1; display: grid; gap: 40px; align-items: center; }
 .hero-copy { display: grid; gap: 1.5rem; justify-items: start; }
 .hero h1 { font-size: clamp(2.3rem, 7vw, 5rem); font-weight: 800; letter-spacing: -.02em; line-height: 1.04; }
@@ -264,3 +264,11 @@ main { overflow-x: clip; }
 .quick.off { transform: translateY(110%); }
 @media (min-width: 820px) { .quick { display: none; } }
 @media (prefers-reduced-motion: reduce) { * { transition-duration: .01ms !important; } }
+
+/* ---------- демо-версия ---------- */
+:host { --demo-h: 44px; }
+.demo-bar { position: fixed; z-index: 31; inset: 0 0 auto 0; height: var(--demo-h); display: flex; align-items: center; justify-content: center; padding: 0 12px; background: var(--saffron); color: #1a1208; text-align: center; font-size: .82rem; line-height: 1.25; font-weight: 700; }
+.demo-bar b { letter-spacing: .1em; text-transform: uppercase; margin-right: .35em; }
+@media (min-width: 640px) { :host { --demo-h: 38px; } .demo-bar { font-size: .9rem; } }
+.toast { position: fixed; z-index: 60; left: 16px; right: 16px; bottom: calc(96px + env(safe-area-inset-bottom, 0px)); margin: 0 auto; max-width: 420px; background: #0b1520; color: #fff; border: 1px solid var(--line); font-weight: 700; font-size: .95rem; line-height: 1.4; padding: 14px 18px; border-radius: 16px; text-align: center; opacity: 0; pointer-events: none; transition: opacity .25s; }
+.toast.on { opacity: 1; }
