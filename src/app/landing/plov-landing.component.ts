@@ -53,21 +53,10 @@ export class PlovLandingComponent {
   protected readonly isCustomTime = signal(false);
 
   private readonly heroVideo = viewChild<ElementRef<HTMLVideoElement>>('heroVideo');
-  private readonly demoBar = viewChild<ElementRef<HTMLElement>>('demoBar');
 
-  // Плашка «Демо-версия» лежит в начале страницы и уезжает вверх при прокрутке,
-  // а закреплённая шапка поднимается вслед за ней: до самого верха экрана.
-  protected readonly barOffset = signal(0);
 
   constructor() {
     afterNextRender(() => {
-      const update = () => {
-        const height = this.demoBar()?.nativeElement.offsetHeight ?? 0;
-        this.barOffset.set(Math.max(0, height - window.scrollY));
-      };
-      update();
-      window.addEventListener('scroll', update, { passive: true });
-      window.addEventListener('resize', update);
       const video = this.heroVideo()?.nativeElement;
       if (video) {
         video.muted = true;

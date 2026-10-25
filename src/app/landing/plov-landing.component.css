@@ -52,7 +52,7 @@ button { font: inherit; cursor: pointer; }
 @media (prefers-reduced-motion: reduce) { .aurora i { animation: none; } }
 
 /* ---------- верхняя панель ---------- */
-.topbar { position: fixed; z-index: 30; inset: 0 0 auto 0; background: rgba(6, 17, 28, .72); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
+.topbar { position: absolute; z-index: 30; inset: var(--demo-h) 0 auto 0; background: rgba(6, 17, 28, .72); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
 .topbar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 1rem; height: 84px; }
 .logo { display: inline-flex; align-items: center; gap: .8rem; text-decoration: none; line-height: 1; }
 .logo-text { display: inline-flex; flex-direction: column; }
