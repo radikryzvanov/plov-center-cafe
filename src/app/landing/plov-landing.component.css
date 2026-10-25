@@ -52,7 +52,7 @@ button { font: inherit; cursor: pointer; }
 @media (prefers-reduced-motion: reduce) { .aurora i { animation: none; } }
 
 /* ---------- верхняя панель ---------- */
-.topbar { position: fixed; z-index: 30; inset: var(--demo-h) 0 auto 0; background: rgba(6, 17, 28, .72); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
+.topbar { position: fixed; z-index: 30; inset: 0 0 auto 0; background: rgba(6, 17, 28, .72); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
 .topbar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 1rem; height: 84px; }
 .logo { display: inline-flex; align-items: center; gap: .8rem; text-decoration: none; line-height: 1; }
 .logo-text { display: inline-flex; flex-direction: column; }
@@ -267,7 +267,7 @@ main { overflow-x: clip; }
 
 /* ---------- демо-версия ---------- */
 :host { --demo-h: 44px; }
-.demo-bar { position: fixed; z-index: 31; inset: 0 0 auto 0; height: var(--demo-h); display: flex; align-items: center; justify-content: center; padding: 0 12px; background: var(--saffron); color: #1a1208; text-align: center; font-size: .82rem; line-height: 1.25; font-weight: 700; }
+.demo-bar { position: absolute; z-index: 31; inset: 0 0 auto 0; height: var(--demo-h); display: flex; align-items: center; justify-content: center; padding: 0 12px; background: var(--saffron); color: #1a1208; text-align: center; font-size: .82rem; line-height: 1.25; font-weight: 700; }
 .demo-bar b { letter-spacing: .1em; text-transform: uppercase; margin-right: .35em; }
 @media (min-width: 640px) { :host { --demo-h: 38px; } .demo-bar { font-size: .9rem; } }
 .toast { position: fixed; z-index: 60; left: 16px; right: 16px; bottom: calc(96px + env(safe-area-inset-bottom, 0px)); margin: 0 auto; max-width: 420px; background: #0b1520; color: #fff; border: 1px solid var(--line); font-weight: 700; font-size: .95rem; line-height: 1.4; padding: 14px 18px; border-radius: 16px; text-align: center; opacity: 0; pointer-events: none; transition: opacity .25s; }
